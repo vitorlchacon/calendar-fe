@@ -1,6 +1,9 @@
 import { Routes } from '@angular/router';
+import { HomeComponent } from './home/home.component';
+import { AppComponent } from './app.component';
 
-export const routes: Routes = [
-  { path: 'user', loadChildren: () => import('./user/user.module').then(m => m.UserModule) },
-  { path: '', redirectTo: '/user', pathMatch: 'full' }
+export const APP_ROUTES: Routes = [
+  { path: 'user', loadChildren: () => import('./user/user.routes').then(m => m.USER_ROUTES) },
+  { path: '', component: HomeComponent },
+  { path: '**', redirectTo: '' }
 ];
