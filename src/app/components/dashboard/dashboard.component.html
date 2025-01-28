@@ -1,1 +1,15 @@
-Dashboard
+<header class="hero">
+  <h1>Bem-vindo à Nossa Plataforma</h1>
+  <p>Explore nossos serviços e descubra o que podemos fazer por você.</p>
+</header>
+<section class="features">
+  <mat-grid-list cols="3" rowHeight="1:1" gutterSize="20px">
+    <mat-grid-tile *ngFor="let card of featuredCards">
+      <mat-card class="feature-card">
+        <mat-icon class="icon">{{ card.icon }}</mat-icon>
+        <h2>{{ card.title }}</h2>
+        <p>{{ card.description }}</p>
+      </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+</section>

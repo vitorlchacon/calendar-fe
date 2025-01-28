@@ -7,6 +7,7 @@ import { KeycloakAngularModule } from 'keycloak-angular';
 import { AuthService } from '../core/auth/auth.service';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from '../core/auth/auth.interceptor';
+import { CookieService } from 'ngx-cookie-service';
 
 function initializeKeycloak(authService: AuthService) {
   return () => authService.initKeycloak();
@@ -23,6 +24,7 @@ export const appConfig: ApplicationConfig = {
       useFactory: initializeKeycloak,
       multi: true,
       deps: [AuthService],
-    }
+    },
+    CookieService
   ]
 };

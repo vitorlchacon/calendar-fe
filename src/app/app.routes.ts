@@ -15,8 +15,7 @@ export const routes: Routes = [
     data: { roles: ['USER'] } 
   },
   { path: '',
-    component: DashboardComponent,
-    canActivate: [AuthGuard],
+    component: DashboardComponent
   },
   { path: '**', 
     redirectTo: '' 

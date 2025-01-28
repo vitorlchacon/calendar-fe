@@ -7,6 +7,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @NgModule({
   exports: [
@@ -17,7 +18,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     MatGridListModule,
     MatSidenavModule,
     MatListModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatTooltipModule
   ]
 })
 export class MaterialModule { }

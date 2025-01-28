@@ -1,26 +1,29 @@
 import { Injectable } from '@angular/core';
 import { KeycloakService } from 'keycloak-angular';
 import { environment } from '../../environments/environment';
-import { KeycloakProfile } from 'keycloak-js';
 import { User } from '../../app/model/user.model';
+import { UserService } from '../../app/components/user/user.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private currentUser: User | null = null;
+  public currentUser!: User;
 
-  constructor(private keycloakService: KeycloakService) {}
+  constructor(
+    private keycloakService: KeycloakService,
+    private userService: UserService
+  ) {}
 
-  initKeycloak() {
-    var service = this.keycloakService.init({
+  async initKeycloak() {
+    await this.keycloakService.init({
       config: {
         url: environment.keycloak.url,
         realm: environment.keycloak.realm,
         clientId: environment.keycloak.clientId,
       },
+      loadUserProfileAtStartUp: true,
       initOptions: {
-        onLoad: 'login-required',
         checkLoginIframe: false,
       },
       enableBearerInterceptor: true,
@@ -29,17 +32,25 @@ export class AuthService {
           '/assets',
           '/clients/public']
     });
-    this.loadUserProfile();
-    return service;
   }
 
-  loadUserProfile(): void {
-    this.keycloakService.loadUserProfile().then((profile) => {
+  async loadUserProfile(): Promise<any> {
+    await this.keycloakService.loadUserProfile()
+    .then(profile => {
       this.currentUser = new User(profile);
-    });
-  }
+    }).finally(() => {
+      this.currentUser.roles = this.keycloakService.getUserRoles()
+      .filter(role => role !== "view-profile" &&  role !== "default-roles-calendar-app" )
+    })
+    await this.userService.getMyUser(this.currentUser).subscribe(userDetails => {
+      console.log(userDetails)
+      this.currentUser = userDetails
+      console.log(userDetails)
+    })
+    return this.currentUser
+  } 
 
-  getUser(): User | null {
+  getUser(): User {
     return this.currentUser;
   }
 
@@ -49,6 +60,10 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     return this.keycloakService.isLoggedIn();
+  }
+
+  login() {
+    this.keycloakService.login();
   }
 
   logout() {

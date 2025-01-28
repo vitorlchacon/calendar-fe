@@ -1,1 +1,93 @@
-<p>user-profile works!</p>
+<div class="p-fluid p-grid p-justify-center p-mt-5">
+  <p-card class="p-col-12 p-md-8">
+    <!-- Profile Picture and Upload -->
+    <div class="p-d-flex p-flex-column p-ai-center p-mb-4 profile-picture-div">
+      <img
+        [src]="user.profilePhoto"
+        alt="Profile Picture"
+        class="profile-picture"
+      />
+    </div>
+    <div class="p-d-flex p-flex-column p-ai-center p-mb-4 profile-picture-div">
+      <p-fileUpload
+        name="profilePhoto"
+        accept="image/*"
+        maxFileSize="2000000"
+        [auto]="true"
+        customUpload
+        (uploadHandler)="onFileSelected($event)"
+        chooseLabel="Upload New Picture"
+        class="p-mt-2"
+        mode="basic"
+      ></p-fileUpload>
+    </div>
+
+    <div class="p-d-flex p-ai-center p-mb-4">
+      <div>
+        <h2>{{ user.fullName }}</h2>
+        <p class="p-m-0">
+          <strong>Username:</strong> {{ user.username }} 
+          <span class="p-ml-2">
+            <p-badge [value]="user.userId" severity="info"></p-badge>
+          </span>
+        </p>
+      </div>
+    </div>
+    <!-- General Information -->
+    <div class="p-mb-3">
+      <h3>Informações Gerais</h3>
+      <table class="p-datatable">
+        <tbody>
+          <tr>
+            <td><strong>Email:</strong></td>
+            <td>{{ user.email }}</td>
+          </tr>
+          <tr>
+            <td><strong>Verificado:</strong></td>
+            <td>
+              <p-badge 
+                [value]="user.emailVerified ? 'Sim' : 'Não'" 
+                [severity]="user.emailVerified ? 'success' : 'danger'"
+              ></p-badge>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Altura:</strong></td>
+            <td>{{ user.height }}</td>
+          </tr>
+          <tr>
+            <td><strong>Peso:</strong></td>
+            <td>{{ user.weight }}</td>
+          </tr>
+          <tr>
+            <td><strong>Data de Nascimento:</strong></td>
+            <td>{{ user.birthday | date: 'longDate' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="p-mb-3">
+      <h3>Funções</h3>
+      <div *ngFor="let role of user.roles" class="p-mb-2">
+        <p-badge [value]="role" severity="primary"></p-badge>
+      </div>
+    </div>
+
+    <div class="p-mb-3">
+      <h3>Histórico</h3>
+      <table class="p-datatable">
+        <tbody>
+          <tr>
+            <td><strong>Criado em:</strong></td>
+            <td>{{ user.createdAt | date: 'longDate' }}</td>
+          </tr>
+          <tr>
+            <td><strong>Última atualização:</strong></td>
+            <td>{{ user.updatedAt | date: 'longDate' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </p-card>
+</div>

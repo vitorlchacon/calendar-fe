@@ -1,0 +1,40 @@
+
+.hero {
+  text-align: center;
+  padding: 2rem;
+  //background: linear-gradient(135deg, #3f51b5, #5c6bc0);
+  //color: #3f51b5;
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    font-size: 1.2rem;
+  }
+}
+
+
+
+.features {
+  padding: 2rem;
+
+  .feature-card {
+    text-align: center;
+    padding: 1rem;
+    mat-icon.icon {
+      font-size: 48px;
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      margin: 0.5rem 0;
+    }
+
+    p {
+      font-size: 1rem;
+    }
+  }
+}
