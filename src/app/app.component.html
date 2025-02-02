@@ -1,67 +1,45 @@
-<div class="card">
-  <p-menubar [model]="items">
-      <ng-template pTemplate="start">
-        <p-avatar size="large" class="logo" image="../assets/img/logo_icon.png" alt="Meal Calendar" />
+<header class="app-toolbar">
+  <div class="toolbar-content">
+    <div class="left-section">
+      <img 
+        src="assets/img/logo_icon.png" 
+        alt="App Logo" 
+        class="app-logo"
+      >
+    </div>
+    
+    <div class="right-section">
+      <ng-container *ngIf="!isLoggedIn; else loggedInSection">
+        <button 
+          pButton 
+          label="Login" 
+          icon="pi pi-sign-in" 
+          class="p-button-text login-button"
+          (click)="login()"
+        ></button>
+      </ng-container>
+      
+      <ng-template #loggedInSection>
+        aaaa
+        <button 
+          pButton 
+          label="Logout" 
+          icon="pi pi-sign-out" 
+          class="p-button-text logout-button"
+          (click)="logout()"
+        ></button>
+        <p-avatar *ngIf="user != undefined"
+          (click)="router.navigate(['/user']);"
+          [image]="user.profilePhoto || 'assets/img/user_thumb.jpeg'"
+          size="normal" 
+          shape="circle"
+          class="profile-avatar"
+        ></p-avatar>
       </ng-template>
-      <ng-template pTemplate="item" let-item let-root="root">
-          <a pRipple class="flex align-items-center p-menuitem-link menu-button">
-              <span [class]="item.icon"></span>
-              <span class="ml-2">{{ item.label }}</span>
-              <p-badge *ngIf="item.badge" [ngClass]="{ 'ml-auto': !root, 'ml-2': root }" [value]="item.badge" />
-              <i *ngIf="item.items" [ngClass]="['pi', root ? 'pi-angle-down ml-2' : 'pi-angle-right ml-auto']"></i>
-          </a>
-      </ng-template>
-      <ng-template pTemplate="end">
-          <div class="flex align-items-center gap-2">
-              <input type="text" pInputText placeholder="Search" class="w-8rem sm:w-auto" />
-              <p-avatar image="{{this.user?.profilePhoto}}" shape="circle" />
-          </div>
-      </ng-template>
-  </p-menubar>
-</div>
-
-<!--p-toolbar>
-  <ng-template pTemplate="start">
-      <div class="flex items-center gap-2">
-        <p-avatar size="large" class="logo" image="../assets/img/logo_icon.png" alt="Meal Calendar" />
-      </div>
-  </ng-template>
-
-  <ng-template pTemplate="end">
-      <div class="flex items-center gap-2 toolbar-right-menu">
-          <p-button size="small" label="Login" *ngIf="!isLoggedIn" mat-menu-item (click)="login()"/>
-          <p-button size="small" label="{{user?.username}}" severity="contrast" *ngIf="isLoggedIn" mat-menu-item (click)="router.navigate(['/user']);"/>
-          <p-button size="small" label="Logout" severity="danger" *ngIf="isLoggedIn" mat-menu-item (click)="logout()"/>
-          <p-avatar class="logo" image="{{this.user?.profilePhoto}}"/>
-      </div>
-  </ng-template>
-</p-toolbar>
+    </div>
+  </div>
+</header>
+    
 <div style="height: 100%;">
   <router-outlet></router-outlet>
-</div-->
-
-<!--div class="homepage">
-  
-  <div class="toolbar">
-    <mat-toolbar color="primary">
-      <a href="/dashboard" class="logo_link">
-        <img class="logo" src="../assets/img/logo_icon.png" alt="Meal Calendar">
-        Mealendar
-      </a>
-      
-      <span class="spacer"></span>
-      <span *ngIf="isLoggedIn">Bem-vindo, {{user?.firstName}}</span>
-      <button mat-button [matMenuTriggerFor]="menu">
-        <mat-icon class="icon">menu</mat-icon>
-      </button>
-      <mat-menu #menu="matMenu">
-        <button *ngIf="!isLoggedIn" mat-menu-item (click)="login()">Login</button>
-        <button *ngIf="isLoggedIn" mat-menu-item (click)="router.navigate(['/user']);">{{user?.username}}</button>
-        <button *ngIf="isLoggedIn" mat-menu-item (click)="logout()">Logout</button>
-      </mat-menu>
-    </mat-toolbar>
-  </div>
-  <div style="height: 100%;">
-    <router-outlet></router-outlet>
-  </div>
-</div-->
+</div>

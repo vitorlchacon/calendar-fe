@@ -3,6 +3,7 @@ import { KeycloakService } from 'keycloak-angular';
 import { environment } from '../../environments/environment';
 import { User } from '../../app/model/user.model';
 import { UserService } from '../../app/components/user/user.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,8 @@ export class AuthService {
 
   constructor(
     private keycloakService: KeycloakService,
-    private userService: UserService
+    private userService: UserService,
+    private sanitizer: DomSanitizer
   ) {}
 
   async initKeycloak() {
@@ -37,15 +39,13 @@ export class AuthService {
   async loadUserProfile(): Promise<any> {
     await this.keycloakService.loadUserProfile()
     .then(profile => {
-      this.currentUser = new User(profile);
+      this.currentUser = new User(profile, this.sanitizer);
     }).finally(() => {
       this.currentUser.roles = this.keycloakService.getUserRoles()
       .filter(role => role !== "view-profile" &&  role !== "default-roles-calendar-app" )
     })
     await this.userService.getMyUser(this.currentUser).subscribe(userDetails => {
-      console.log(userDetails)
       this.currentUser = userDetails
-      console.log(userDetails)
     })
     return this.currentUser
   } 

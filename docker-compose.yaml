@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  frontend:
+    image: calendar-fe
+    build: .
+    ports:
+      - "80:80"
+    networks:
+      - calendar
+
+networks:
+  calendar:
+    driver: bridge

@@ -1,93 +1,128 @@
-<div class="p-fluid p-grid p-justify-center p-mt-5">
-  <p-card class="p-col-12 p-md-8">
-    <!-- Profile Picture and Upload -->
-    <div class="p-d-flex p-flex-column p-ai-center p-mb-4 profile-picture-div">
-      <img
-        [src]="user.profilePhoto"
-        alt="Profile Picture"
-        class="profile-picture"
-      />
-    </div>
-    <div class="p-d-flex p-flex-column p-ai-center p-mb-4 profile-picture-div">
-      <p-fileUpload
-        name="profilePhoto"
-        accept="image/*"
-        maxFileSize="2000000"
-        [auto]="true"
-        customUpload
-        (uploadHandler)="onFileSelected($event)"
-        chooseLabel="Upload New Picture"
-        class="p-mt-2"
-        mode="basic"
-      ></p-fileUpload>
-    </div>
+<div class="user-profile-container">
+  <p-card class="profile-card" *ngIf="user">
+    <ng-template pTemplate="header">
+      <div class="header-content">
+        <p-avatar 
+          
+          size="xlarge" 
+          shape="square"
+          class="profile-avatar"
+        >
+          <img [src]="user.profilePhoto || '../../../../assets/img/user_thumb.jpeg'" alt="">
+        </p-avatar>
+        <div class="header-text">
+          <h1>{{ user.fullName }}</h1>
+          <div class="verification-status">
+            <span class="email-status">
+              {{ user.email }}
+              <i *ngIf="user.emailVerified" class="pi pi-check-circle verified-icon"></i>
+            </span>
+            <p-tag 
+              [value]="role" 
+              severity="info" 
+              *ngFor="let role of user.roles"
+              class="role-tag"
+            ></p-tag>
+          </div>
+        </div>
+      </div>
+    </ng-template>
 
-    <div class="p-d-flex p-ai-center p-mb-4">
-      <div>
-        <h2>{{ user.fullName }}</h2>
-        <p class="p-m-0">
-          <strong>Username:</strong> {{ user.username }} 
-          <span class="p-ml-2">
-            <p-badge [value]="user.userId" severity="info"></p-badge>
-          </span>
-        </p>
+    <div class="profile-content">
+      <div class="grid">
+        <div class="col-4">
+          <p-panel header="Basic Information">
+            <div class="info-item">
+              <label>Username</label>
+              <p>{{ user.username }}</p>
+            </div>
+            <div class="info-item">
+              <label>Birthday</label>
+              <p *ngIf="!editing">{{ user.birthday | date: 'longDate' }}</p>
+              <p-calendar 
+                *ngIf="editing" 
+                [(ngModel)]="editedUser.birthday" 
+                dateFormat="dd/mm/yy"
+                [showIcon]="true"
+              ></p-calendar>
+            </div>
+          </p-panel>
+        </div>
+
+        <div class="col-8">
+          <p-panel header="Physical Attributes" class="mb-4">
+            <div class="grid">
+              <div class="col-6">
+                <div class="info-item">
+                  <label>Height (cm)</label>
+                  <p *ngIf="!editing">{{ user.height || 'Not specified' }}</p>
+                  <input 
+                    *ngIf="editing"
+                    type="text" 
+                    pInputText 
+                    [(ngModel)]="editedUser.height"
+                    placeholder="Enter height"
+                  >
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="info-item">
+                  <label>Weight (kg)</label>
+                  <p *ngIf="!editing">{{ user.weight || 'Not specified' }}</p>
+                  <input 
+                    *ngIf="editing"
+                    type="text" 
+                    pInputText 
+                    [(ngModel)]="editedUser.weight"
+                    placeholder="Enter weight"
+                  >
+                </div>
+              </div>
+            </div>
+          </p-panel>
+
+          <p-panel header="Account Details">
+            <div class="info-item">
+              <label>Member Since</label>
+              <p>{{ user.createdAt | date: 'MMM yyyy' }}</p>
+            </div>
+            <div class="info-item">
+              <label>Last Updated</label>
+              <p>{{ user.updatedAt | date: 'medium' }}</p>
+            </div>
+          </p-panel>
+        </div>
       </div>
     </div>
-    <!-- General Information -->
-    <div class="p-mb-3">
-      <h3>Informações Gerais</h3>
-      <table class="p-datatable">
-        <tbody>
-          <tr>
-            <td><strong>Email:</strong></td>
-            <td>{{ user.email }}</td>
-          </tr>
-          <tr>
-            <td><strong>Verificado:</strong></td>
-            <td>
-              <p-badge 
-                [value]="user.emailVerified ? 'Sim' : 'Não'" 
-                [severity]="user.emailVerified ? 'success' : 'danger'"
-              ></p-badge>
-            </td>
-          </tr>
-          <tr>
-            <td><strong>Altura:</strong></td>
-            <td>{{ user.height }}</td>
-          </tr>
-          <tr>
-            <td><strong>Peso:</strong></td>
-            <td>{{ user.weight }}</td>
-          </tr>
-          <tr>
-            <td><strong>Data de Nascimento:</strong></td>
-            <td>{{ user.birthday | date: 'longDate' }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
 
-    <div class="p-mb-3">
-      <h3>Funções</h3>
-      <div *ngFor="let role of user.roles" class="p-mb-2">
-        <p-badge [value]="role" severity="primary"></p-badge>
+    <ng-template pTemplate="footer">
+      <div class="footer-actions">
+        <button 
+          *ngIf="!editing"
+          pButton 
+          icon="pi pi-pencil" 
+          label="Edit Profile" 
+          class="p-button-outlined"
+          (click)="enterEditMode()"
+        ></button>
+        
+        <div *ngIf="editing" class="edit-buttons">
+          <button 
+            pButton 
+            icon="pi pi-save" 
+            label="Save Changes" 
+            class="p-button-success"
+            (click)="saveChanges()"
+          ></button>
+          <button 
+            pButton 
+            icon="pi pi-times" 
+            label="Cancel" 
+            class="p-button-outlined p-button-danger"
+            (click)="cancelEdit()"
+          ></button>
+        </div>
       </div>
-    </div>
-
-    <div class="p-mb-3">
-      <h3>Histórico</h3>
-      <table class="p-datatable">
-        <tbody>
-          <tr>
-            <td><strong>Criado em:</strong></td>
-            <td>{{ user.createdAt | date: 'longDate' }}</td>
-          </tr>
-          <tr>
-            <td><strong>Última atualização:</strong></td>
-            <td>{{ user.updatedAt | date: 'longDate' }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    </ng-template>
   </p-card>
 </div>

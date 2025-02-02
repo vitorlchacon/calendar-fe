@@ -1,80 +1,86 @@
-import { Component } from '@angular/core';
-import { Buffer } from 'buffer';
-import { AuthService } from '../../../../core/auth/auth.service';
-import { UserService } from '../user.service';
-import { MAT_DATE_LOCALE } from '@angular/material/core';
-import { User } from '../../../model/user.model';
-import { HttpClient } from '@angular/common/http';
+import { Component, SecurityContext, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { CardModule } from 'primeng/card';
 import { AvatarModule } from 'primeng/avatar';
-import { BadgeModule } from 'primeng/badge';
-import { TableModule } from 'primeng/table';
-import { FileUploadModule } from 'primeng/fileupload';
+import { TagModule } from 'primeng/tag';
+import { PanelModule } from 'primeng/panel';
+import { ButtonModule } from 'primeng/button';
+import { CalendarModule } from 'primeng/calendar';
+import { InputTextModule } from 'primeng/inputtext';
+import { User } from '../../../model/user.model';
+import { AuthService } from '../../../../core/auth/auth.service';
+import { UserService } from '../user.service';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-user-profile',
   standalone: true,
-  imports: [ CommonModule, CardModule, AvatarModule, BadgeModule, TableModule, FileUploadModule ],
+  imports: [
+    CommonModule,
+    FormsModule,
+    CardModule,
+    AvatarModule,
+    TagModule,
+    PanelModule,
+    ButtonModule,
+    CalendarModule,
+    InputTextModule
+  ],
   templateUrl: './user-profile.component.html',
-  styleUrl: './user-profile.component.scss',
-  providers: [{ provide: MAT_DATE_LOCALE, useValue: 'en-GB' }]
+  styleUrls: ['./user-profile.component.scss']
 })
-export class UserProfileComponent {
-  user: User;
-  test = "test";
-  reader = new FileReader();
+export class UserProfileComponent implements OnDestroy {
+  user!: User;
+  editedUser!: User;
+  editing = false;
 
-  constructor(private authService: AuthService, private userService: UserService, private http: HttpClient) {
-    this.user = this.authService.getUser();
-    this.userService.getMyUser(this.user).subscribe(res => 
-      { 
-        this.user.birthday = res.birthday
-        this.user.createdAt = res.createdAt
-        this.user.updatedAt = res.updatedAt
-        this.user.profilePhoto = res.profilePhoto
-        if (!res.profilePhoto) {
-          this.http.get('assets/img/user_thumb.jpeg', {responseType: 'blob'})
-          .subscribe(userThumb => {
-              this.reader.readAsDataURL(userThumb)
-            });
-          }
-      }
-    )
+  constructor(private authService: AuthService,
+              private userService: UserService,
+              private http: HttpClient,
+              private sanitizer: DomSanitizer) {
+    this.initializeUser();
   }
 
-  onFileSelected(event: any) {
-    this.reader.onload = (e: any) => {
-      this.user.profilePhoto = e.target.result;
-      this.userService.saveUser(this.user).subscribe(res => 
-        { 
-          console.log(this.user)
-          this.user = res
-          console.log(this.user)
-        });
-    };
-    this.reader.readAsDataURL(event.files[0]);
-    
+  private initializeUser(): void {
+    this.userService.getMyUser(this.authService.getUser()).subscribe(res => {
+      console.log({ ...this.user, ...res })
+      this.user = new User({ ...this.user, ...res }, this.sanitizer);
+    });
+  }
+  
+  enterEditMode(): void {
+    this.editing = true;
+    // Clone the user object for editing
+    this.editedUser = new User(
+      {
+        ...this.user,
+        birthday: new Date(this.user.birthday)
+      }, 
+      this.sanitizer);
   }
 
-  private base64toBlob(base64Data: any, contentType: any): Blob {
-    contentType = contentType || '';
-    const sliceSize = 1024;
-    const byteCharacters = Buffer.from(base64Data, 'base64').toString('latin1');
-    const bytesLength = byteCharacters.length;
-    const slicesCount = Math.ceil(bytesLength / sliceSize);
-    const byteArrays = new Array(slicesCount);
+  cancelEdit(): void {
+    this.editing = false;
+    this.editedUser = this.user;
+  }
 
-    for (let sliceIndex = 0; sliceIndex < slicesCount; ++sliceIndex) {
-      const begin = sliceIndex * sliceSize;
-      const end = Math.min(begin + sliceSize, bytesLength);
-
-      const bytes = new Array(end - begin);
-      for (let offset = begin, i = 0; offset < end; ++i, ++offset) {
-        bytes[i] = byteCharacters[offset].charCodeAt(0);
+  saveChanges(): void {
+    this.userService.saveUser(this.editedUser).subscribe({
+      next: (response) => {
+        console.log(response)
+        this.user = new User(this.editedUser, this.sanitizer);
+        this.editing = false;
+      },
+      error: (err) => {
+        console.error('Failed to save user:', err);
+        // Handle error (show toast/message)
       }
-      byteArrays[sliceIndex] = new Uint8Array(bytes);
-    }
-    return new Blob(byteArrays, { type: contentType });
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.user.destroy();
   }
 }

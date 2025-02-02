@@ -1,23 +1,79 @@
-/*:host ::ng-deep .p-toolbar {
-  border-radius: 3rem;
-  padding: '1rem 1rem 1rem 1.5rem'
+.app-toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: white;
+  box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+  padding: 0 2rem;
+  
+  .toolbar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 64px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .left-section {
+    .app-logo {
+      height: 40px;
+      width: auto;
+      transition: transform 0.3s ease;
+      
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+  }
+
+  .right-section {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+
+    .login-button, .logout-button {
+      color: #2c3e50;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        background: rgba(44, 62, 80, 0.05);
+        color: darken(#2c3e50, 10%);
+      }
+    }
+
+    .profile-avatar {
+      border: 2px solid white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+  }
 }
 
-.logo {
-  ::ng-deep .p-avatar img {
-    border-radius: 3em;
+// Responsive adjustments
+@media (max-width: 768px) {
+  .app-toolbar {
+    padding: 0 1rem;
+    
+    .right-section {
+      gap: 1rem;
+      
+      .login-button, .logout-button {
+        span {
+          display: none;
+        }
+        
+        .pi {
+          margin-right: 0 !important;
+        }
+      }
+    }
   }
-  width: 80px;
-  height: 80px;
-}
-
-.toolbar-right-menu p-button{
-  padding-right: 20px;
-}*/
-
-.menu-button {
-  span, i {
-    padding-left: 5px
-  }
-  display: table;
 }
