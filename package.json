@@ -6,7 +6,12 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "build:prod": "ng build --configuration production",
+    "postbuild:prod": "npm run analyze",
+    "analyze": "source-map-explorer dist/calendar-fe/main.*.js",
+    "test:prod": "ng test --watch=false --code-coverage --browsers=ChromeHeadless",
+    "lint:prod": "ng lint --fix --format=stylish"
   },
   "private": true,
   "dependencies": {
