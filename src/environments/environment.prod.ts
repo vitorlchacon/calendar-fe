@@ -2,13 +2,13 @@ export const environment = {
   production: true,
   enableDebug: false,
   defaultLanguage: 'pt-BR',
-  version: '1.0.0', // Atualize conforme suas versões
+  version: '1.0.0',
   keycloak: {
-    url: 'http://localhost:8081',
-    realm: 'calendar-app',
-    clientId: 'calendar-fe'
+    url: 'http://keycloak:8443',
+    realm: 'calendar',
+    clientId: 'calendar'
   },
   backend: {
-    url: 'http://localhost:8080',
+    url: 'http://calendar-be:8080',
   }
 };

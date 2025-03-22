@@ -1,5 +1,5 @@
 # Estágio de construção (Build)
-FROM node:18-alpine AS build
+FROM node:20-alpine AS build
 WORKDIR /app
 
 # Copiar arquivos de dependência
@@ -12,7 +12,7 @@ RUN npm ci --legacy-peer-deps
 COPY . .
 
 # Build da aplicação
-RUN npm run build -- --configuration production
+RUN npm run build -- --configuration=production
 
 # Estágio de produção
 FROM nginx:1.25-alpine
@@ -21,10 +21,7 @@ FROM nginx:1.25-alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copiar arquivos de build do estágio anterior
-COPY --from=build /app/dist/calendar-fe /usr/share/nginx/html
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s CMD wget --no-verbose --tries=1 --spider http://localhost:80/ || exit 1
+COPY --from=build /app/dist/calendar-fe/browser /usr/share/nginx/html
 
 # Expor porta e iniciar servidor
 EXPOSE 80
