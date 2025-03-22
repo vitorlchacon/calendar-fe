@@ -20,4 +20,5 @@ destroy:
 
 # Deploy Application to Server
 deploy:
+	@ssh -i ~/.ssh/dev.key $(SSH_USER)@$(SERVER_IP) "kubectl --namespace=calendar apply -f ~/calendar-fe/k8s/calendar-fe-service.yaml"
 	@ssh -i ~/.ssh/dev.key $(SSH_USER)@$(SERVER_IP) "kubectl --namespace=calendar apply -f ~/calendar-be/k8s/calendar-fe-deployment.yaml"
