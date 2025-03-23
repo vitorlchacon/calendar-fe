@@ -4,7 +4,7 @@ export const environment = {
   defaultLanguage: 'pt-BR',
   version: '1.0.0',
   keycloak: {
-    url: 'http://192.168.1.211:8443',
+    url: 'https://192.168.1.211:8443',
     realm: 'calendar',
     clientId: 'calendar'
   },
